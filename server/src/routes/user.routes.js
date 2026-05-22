@@ -12,7 +12,10 @@ router.get("/:id", async (req, res) => {
     author: user._id,
     status: "active",
     visibility: "public",
-  }).sort("-createdAt");
+  })
+    .populate("author", "name avatar role")
+    .populate("comments.author", "name avatar")
+    .sort("-createdAt");
   res.json({ user, posts });
 });
 
@@ -23,6 +26,16 @@ router.patch("/me", auth, async (req, res) => {
   if (avatar !== undefined) req.user.avatar = avatar;
   await req.user.save();
   res.json(req.user.safe());
+});
+
+router.patch("/me/theme", auth, async (req, res) => {
+  const { theme } = req.body;
+  if (theme !== "light" && theme !== "dark") {
+    return res.status(400).json({ message: "Invalid theme" });
+  }
+  req.user.theme = theme;
+  await req.user.save();
+  res.json({ theme });
 });
 
 router.post("/:id/follow", auth, async (req, res) => {

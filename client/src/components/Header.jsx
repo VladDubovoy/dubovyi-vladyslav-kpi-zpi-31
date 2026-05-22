@@ -1,6 +1,7 @@
 import { LogOut, MessageSquare, Plus, ShieldCheck } from "lucide-react";
 import { useAuth } from "../store/auth";
 import { VIEWS } from "../constants/views";
+import { ThemeToggle } from "./ThemeToggle";
 
 const navItems = [
   [VIEWS.FEED, "Стрічка"],
@@ -55,6 +56,8 @@ export function Header({ view, onViewChange }) {
             <ShieldCheck size={17} /> Адмін
           </button>
         )}
+
+        <ThemeToggle />
 
         {!user ? (
           <button onClick={() => onViewChange(VIEWS.AUTH)} className="primary">

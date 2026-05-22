@@ -47,3 +47,30 @@ nav {
     flex-direction: column;
   }
 }
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fn.rem(38px);
+  height: fn.rem(38px);
+  padding: 0;
+  border: fn.rem(1px) solid var(--border);
+  border-radius: fn.rem(999px);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition:
+    background 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease;
+
+  &:hover {
+    background: var(--bg-soft);
+  }
+
+  &:focus-visible {
+    outline: fn.rem(2px) solid var(--blue);
+    outline-offset: fn.rem(2px);
+  }
+}

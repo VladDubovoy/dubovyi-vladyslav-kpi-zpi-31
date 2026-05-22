@@ -15,6 +15,7 @@ const userSchema = new mongoose.Schema(
     bio: { type: String, default: "" },
     role: { type: String, enum: ["user", "admin"], default: "user" },
     isBlocked: { type: Boolean, default: false },
+    theme: { type: String, enum: ["light", "dark"], default: "light" },
     followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   },

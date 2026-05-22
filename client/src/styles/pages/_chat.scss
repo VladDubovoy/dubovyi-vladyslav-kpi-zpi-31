@@ -11,7 +11,7 @@
 
   aside {
     padding: fn.rem(14px);
-    border-right: fn.rem(1px) solid vars.$color-ui-border;
+    border-right: fn.rem(1px) solid var(--border);
     display: flex;
     flex-direction: column;
     gap: fn.rem(8px);
@@ -41,7 +41,7 @@
 .msg {
   max-width: 70%;
   align-self: flex-start;
-  background: vars.$color-ui-soft-2;
+  background: var(--bg-soft);
   border-radius: fn.rem(18px);
   padding: fn.rem(10px) fn.rem(13px);
 }
@@ -58,7 +58,7 @@
 
     aside {
       border-right: 0;
-      border-bottom: fn.rem(1px) solid vars.$color-ui-border;
+      border-bottom: fn.rem(1px) solid var(--border);
     }
   }
 }

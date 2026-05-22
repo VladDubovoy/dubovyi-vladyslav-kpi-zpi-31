@@ -16,7 +16,7 @@
     width: 100%;
     height: fn.rem(420px);
     object-fit: cover;
-    background: vars.$color-text-dark;
+    background: var(--text-heading);
   }
 
   div {

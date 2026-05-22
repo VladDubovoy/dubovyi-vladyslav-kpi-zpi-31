@@ -15,7 +15,7 @@
     display: flex;
     align-items: center;
     gap: fn.rem(5px);
-    color: #334455;
+    color: var(--text-subtle);
   }
 }
 
@@ -23,7 +23,7 @@
   height: fn.rem(320px);
   border-radius: fn.rem(vars.$radius-lg);
   overflow: hidden;
-  background: vars.$color-ui-soft;
+  background: var(--bg-soft);
 
   img,
   video {

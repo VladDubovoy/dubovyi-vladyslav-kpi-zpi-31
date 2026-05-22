@@ -13,20 +13,20 @@
     font-size: clamp(fn.rem(34px), 6vw, fn.rem(68px));
     line-height: 0.95;
     margin: fn.rem(16px) 0;
-    color: vars.$color-text-heading;
+    color: var(--text-heading);
   }
 
   p {
     font-size: fn.rem(19px);
     max-width: fn.rem(760px);
-    color: vars.$color-text-muted;
+    color: var(--text-muted);
   }
 }
 
 .badge {
   padding: fn.rem(8px) fn.rem(14px);
   border-radius: fn.rem(vars.$radius-pill);
-  background: vars.$color-ui-soft;
+  background: var(--bg-soft);
   color: vars.$color-blue-700;
   font-weight: 800;
 }

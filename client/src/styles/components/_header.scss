@@ -10,9 +10,9 @@
   align-items: center;
   justify-content: space-between;
   padding: fn.rem(16px) 5vw;
-  background: rgb(255 255 255 / 78%);
+  background: var(--bg-surface);
   backdrop-filter: blur(fn.rem(16px));
-  box-shadow: vars.$shadow-topbar;
+  box-shadow: var(--shadow-topbar);
 }
 
 .brand {

@@ -10,8 +10,8 @@ button {
   border: 0;
   border-radius: fn.rem(vars.$radius-xs);
   padding: fn.rem(10px) fn.rem(14px);
-  background: vars.$color-ui-bg-soft;
-  color: #12326b;
+  background: var(--bg-soft);
+  color: var(--text-heading);
   font-weight: 700;
   cursor: pointer;
   display: inline-flex;
@@ -21,18 +21,18 @@ button {
 
 button:hover,
 .active {
-  background: vars.$color-ui-bg-active;
+  background: var(--bg-soft-active);
 }
 
 input,
 textarea,
 select {
   width: 100%;
-  border: fn.rem(1px) solid vars.$color-ui-border;
+  border: fn.rem(1px) solid var(--border);
   border-radius: fn.rem(vars.$radius-xs);
   padding: fn.rem(13px);
-  background: vars.$color-ui-bg;
-  color: vars.$color-text-dark;
+  background: var(--bg-soft);
+  color: var(--text-heading);
 }
 
 textarea {

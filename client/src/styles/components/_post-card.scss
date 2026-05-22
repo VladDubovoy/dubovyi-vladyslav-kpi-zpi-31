@@ -11,13 +11,13 @@
   }
 
   p {
-    color: #42618b;
+    color: var(--text-muted);
   }
 }
 
 .media {
   height: fn.rem(230px);
-  background: vars.$color-ui-soft;
+  background: var(--bg-soft);
 
   img,
   video {
@@ -36,7 +36,7 @@
   display: flex;
   align-items: center;
   gap: fn.rem(10px);
-  color: #315380;
+  color: var(--text-heading);
   font-weight: 800;
 }
 
@@ -57,7 +57,7 @@
 
   span {
     font-size: fn.rem(12px);
-    background: vars.$color-ui-soft-2;
+    background: var(--bg-soft);
     color: vars.$color-sky-900;
     padding: fn.rem(5px) fn.rem(9px);
     border-radius: fn.rem(99px);
@@ -84,5 +84,5 @@
 .mini {
   display: block;
   margin-top: fn.rem(8px);
-  color: vars.$color-text-muted;
+  color: var(--text-muted);
 }

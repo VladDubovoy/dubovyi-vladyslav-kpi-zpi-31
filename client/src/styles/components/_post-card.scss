@@ -18,14 +18,13 @@
 .media {
   height: fn.rem(230px);
   background: vars.$color-ui-soft;
-  display: grid;
-  place-items: center;
 
   img,
   video {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center;
   }
 }
 

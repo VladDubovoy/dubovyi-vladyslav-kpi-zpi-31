@@ -19,6 +19,16 @@ import chatRoutes from "./routes/chat.routes.js";
 import User from "./models/User.js";
 
 dotenv.config();
+
+if (!process.env.JWT_SECRET) {
+  console.error("JWT_SECRET is not set. Refusing to start.");
+  process.exit(1);
+}
+if (!process.env.MONGO_URI) {
+  console.error("MONGO_URI is not set. Refusing to start.");
+  process.exit(1);
+}
+
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -48,17 +58,18 @@ app.use("/api/chat", chatRoutes);
 io.use(async (socket, next) => {
   try {
     const token = socket.handshake.auth?.token;
-    if (!token) return next();
-    const payload = jwt.verify(token, process.env.JWT_SECRET || "dev_secret");
-    const user = await User.findById(payload.id).select("_id name");
+    if (!token) return next(new Error("Unauthorized"));
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(payload.id).select("_id name isBlocked");
+    if (!user || user.isBlocked) return next(new Error("Unauthorized"));
     socket.user = user;
     next();
   } catch {
-    next();
+    next(new Error("Unauthorized"));
   }
 });
 io.on("connection", (socket) => {
-  if (socket.user?._id) socket.join(String(socket.user._id));
+  socket.join(String(socket.user._id));
 });
 
 app.use((err, req, res, next) => {

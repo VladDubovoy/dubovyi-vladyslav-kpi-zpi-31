@@ -29,7 +29,7 @@ router.get("/reports", async (_, res) => {
 });
 router.get("/users", async (_, res) => {
   const users = await User.find()
-    .select("-password")
+    .select("-passwordHash")
     .sort("-createdAt")
     .limit(100);
   res.json({ users });
@@ -47,7 +47,7 @@ router.patch("/users/:id/block", async (req, res) => {
     req.params.id,
     { isBlocked: req.body.isBlocked },
     { new: true },
-  ).select("-password");
+  ).select("-passwordHash");
   res.json(user);
 });
 router.patch("/reels/:id/status", async (req, res) => {

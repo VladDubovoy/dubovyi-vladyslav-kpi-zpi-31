@@ -1,8 +1,10 @@
 # MediaShare Blue Pro — вебплатформа для спільного обміну мультимедійним контентом
 
-Оновлена full-stack версія під тему **«Web platform for shared multimedia content exchange»**.
+Full-stack мультимедійна платформа під тему **«Web platform for shared multimedia content exchange»**.
 ## Студент
-
+Дубовий Владислав Олегович
+Група: ЗПІ-зп-31
+Спеціальність: 121 Інженерія програмного забезпечення інформаційних систем
 
 ## Стек
 - Frontend: React + Vite + Zustand + Socket.IO Client
@@ -37,7 +39,7 @@ npm install
 Створіть файл `server/.env`:
 ```env
 PORT=5000
-MONGO_URI=mongodb://127.0.0.1:27017/media_share_platform
+MONGO_URI=mongodb+srv://vladdubovoy15_db_user:<db_password>@cluster0.hfe1hfh.mongodb.net/?appName=Cluster0
 JWT_SECRET=super_secret_key_change_me
 CLIENT_URL=http://localhost:5173
 ```

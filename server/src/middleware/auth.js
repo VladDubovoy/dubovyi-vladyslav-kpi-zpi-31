@@ -6,7 +6,7 @@ export async function auth(req, res, next) {
     const token = req.headers.authorization?.replace("Bearer ", "");
     if (!token)
       return res.status(401).json({ message: "Authorization token required" });
-    const payload = jwt.verify(token, process.env.JWT_SECRET || "dev_secret");
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findById(payload.id);
     if (!user || user.isBlocked)
       return res.status(401).json({ message: "Access denied" });

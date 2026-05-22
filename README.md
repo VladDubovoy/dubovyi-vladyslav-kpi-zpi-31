@@ -1,6 +1,8 @@
 # MediaShare Blue Pro — вебплатформа для спільного обміну мультимедійним контентом
 
 Оновлена full-stack версія під тему **«Web platform for shared multimedia content exchange»**.
+## Студент
+
 
 ## Стек
 - Frontend: React + Vite + Zustand + Socket.IO Client

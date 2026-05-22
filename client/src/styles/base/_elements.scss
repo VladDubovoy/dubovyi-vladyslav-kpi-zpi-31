@@ -1,0 +1,41 @@
+@use "../abstracts/functions" as fn;
+@use "../abstracts/variables" as vars;
+
+main,
+.admin {
+  padding: fn.rem(28px) 5vw;
+}
+
+button {
+  border: 0;
+  border-radius: fn.rem(vars.$radius-xs);
+  padding: fn.rem(10px) fn.rem(14px);
+  background: vars.$color-ui-bg-soft;
+  color: #12326b;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: fn.rem(6px);
+}
+
+button:hover,
+.active {
+  background: vars.$color-ui-bg-active;
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  border: fn.rem(1px) solid vars.$color-ui-border;
+  border-radius: fn.rem(vars.$radius-xs);
+  padding: fn.rem(13px);
+  background: vars.$color-ui-bg;
+  color: vars.$color-text-dark;
+}
+
+textarea {
+  min-height: fn.rem(130px);
+  resize: vertical;
+}

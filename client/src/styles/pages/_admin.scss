@@ -1,0 +1,43 @@
+@use "../abstracts/functions" as fn;
+@use "../abstracts/mixins" as mix;
+@use "../abstracts/variables" as vars;
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(fn.rem(160px), 1fr));
+  gap: fn.rem(14px);
+}
+
+.stat {
+  border-radius: fn.rem(vars.$radius-xl);
+  padding: fn.rem(22px);
+
+  b {
+    display: block;
+    font-size: fn.rem(38px);
+    color: vars.$color-blue-700;
+  }
+}
+
+.report {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: fn.rem(12px);
+  margin: fn.rem(12px) 0;
+  padding: fn.rem(16px);
+  border-radius: fn.rem(vars.$radius-md);
+}
+
+.admin {
+  h1 {
+    color: vars.$color-text-heading;
+  }
+}
+
+@include mix.respond-max(vars.$breakpoint-md) {
+  .report {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

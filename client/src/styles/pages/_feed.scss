@@ -1,0 +1,79 @@
+@use "../abstracts/functions" as fn;
+@use "../abstracts/mixins" as mix;
+@use "../abstracts/variables" as vars;
+
+.hero {
+  display: grid;
+  grid-template-columns: 1.8fr 0.8fr;
+  gap: fn.rem(24px);
+  align-items: center;
+  margin: fn.rem(20px) 0 fn.rem(28px);
+
+  h1 {
+    font-size: clamp(fn.rem(34px), 6vw, fn.rem(68px));
+    line-height: 0.95;
+    margin: fn.rem(16px) 0;
+    color: vars.$color-text-heading;
+  }
+
+  p {
+    font-size: fn.rem(19px);
+    max-width: fn.rem(760px);
+    color: vars.$color-text-muted;
+  }
+}
+
+.badge {
+  padding: fn.rem(8px) fn.rem(14px);
+  border-radius: fn.rem(vars.$radius-pill);
+  background: vars.$color-ui-soft;
+  color: vars.$color-blue-700;
+  font-weight: 800;
+}
+
+.hero-card {
+  min-height: fn.rem(220px);
+  border-radius: fn.rem(vars.$radius-4xl);
+  background: vars.$gradient-hero;
+  color: vars.$color-text-inverse;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  font-size: fn.rem(24px);
+  box-shadow: vars.$shadow-hero;
+
+  small {
+    display: block;
+    font-size: fn.rem(14px);
+  }
+}
+
+.filters {
+  display: flex;
+  gap: fn.rem(10px);
+  align-items: center;
+  border-radius: fn.rem(vars.$radius-lg);
+  padding: fn.rem(14px);
+  margin-bottom: fn.rem(22px);
+
+  input {
+    width: 100%;
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(fn.rem(290px), 1fr));
+  gap: fn.rem(18px);
+}
+
+@include mix.respond-max(vars.$breakpoint-md) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

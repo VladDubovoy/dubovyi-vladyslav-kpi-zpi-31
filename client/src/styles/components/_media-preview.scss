@@ -1,0 +1,13 @@
+@use "../abstracts/variables" as vars;
+
+.media {
+  a {
+    color: vars.$color-blue-700;
+    font-weight: 700;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

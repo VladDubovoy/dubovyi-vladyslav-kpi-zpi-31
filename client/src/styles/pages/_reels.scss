@@ -1,0 +1,33 @@
+@use "../abstracts/functions" as fn;
+@use "../abstracts/mixins" as mix;
+@use "../abstracts/variables" as vars;
+
+.reels {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(fn.rem(260px), 1fr));
+  gap: fn.rem(18px);
+}
+
+.reel {
+  border-radius: fn.rem(vars.$radius-2xl);
+  overflow: hidden;
+
+  video {
+    width: 100%;
+    height: fn.rem(420px);
+    object-fit: cover;
+    background: vars.$color-text-dark;
+  }
+
+  div {
+    padding: fn.rem(16px);
+  }
+}
+
+@include mix.respond-max(vars.$breakpoint-md) {
+  .reel {
+    video {
+      height: fn.rem(300px);
+    }
+  }
+}

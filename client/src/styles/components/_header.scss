@@ -1,0 +1,49 @@
+@use "../abstracts/functions" as fn;
+@use "../abstracts/mixins" as mix;
+@use "../abstracts/variables" as vars;
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: fn.rem(16px) 5vw;
+  background: rgb(255 255 255 / 78%);
+  backdrop-filter: blur(fn.rem(16px));
+  box-shadow: vars.$shadow-topbar;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: fn.rem(12px);
+  font-weight: 900;
+  font-size: fn.rem(20px);
+  cursor: pointer;
+}
+
+.logo {
+  width: fn.rem(42px);
+  height: fn.rem(42px);
+  border-radius: fn.rem(vars.$radius-sm);
+  background: vars.$gradient-logo;
+  display: grid;
+  place-items: center;
+  color: vars.$color-text-inverse;
+}
+
+nav {
+  display: flex;
+  gap: fn.rem(10px);
+  flex-wrap: wrap;
+}
+
+@include mix.respond-max(vars.$breakpoint-md) {
+  .topbar {
+    align-items: flex-start;
+    gap: fn.rem(12px);
+    flex-direction: column;
+  }
+}

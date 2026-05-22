@@ -1,0 +1,13 @@
+@use "sass:math";
+
+@function rem($value, $base: 16px) {
+  @if unitless($value) {
+    $value: $value * 1px;
+  }
+
+  @if unit($value) != "px" {
+    @return $value;
+  }
+
+  @return math.div($value, $base) * 1rem;
+}

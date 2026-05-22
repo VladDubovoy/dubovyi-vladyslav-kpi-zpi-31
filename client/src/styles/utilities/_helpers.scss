@@ -1,0 +1,33 @@
+@use "../abstracts/functions" as fn;
+@use "../abstracts/variables" as vars;
+
+.primary {
+  background: vars.$gradient-primary;
+  color: vars.$color-text-inverse;
+}
+
+.full {
+  width: 100%;
+  justify-content: center;
+}
+
+.link {
+  background: transparent;
+}
+
+.glass {
+  background: rgb(255 255 255 / 74%);
+  border: fn.rem(1px) solid rgb(37 99 235 / 12%);
+  box-shadow: vars.$shadow-glass;
+  backdrop-filter: blur(fn.rem(14px));
+}
+
+.error {
+  color: vars.$color-danger;
+}
+
+.empty {
+  text-align: center;
+  padding: fn.rem(40px);
+  color: vars.$color-text-subtle;
+}

@@ -1,0 +1,45 @@
+$color-text-primary: #0d1b3f;
+$color-text-dark: #0f172a;
+$color-text-heading: #0b255e;
+$color-text-muted: #36547f;
+$color-text-subtle: #456;
+$color-text-inverse: #ffffff;
+
+$color-blue-700: #1d4ed8;
+$color-blue-600: #2563eb;
+$color-blue-500: #3b82f6;
+$color-blue-400: #60a5fa;
+$color-cyan-500: #0ea5e9;
+$color-sky-900: #075985;
+
+$color-ui-bg: #f8fbff;
+$color-ui-bg-soft: #eaf4ff;
+$color-ui-bg-active: #cfe8ff;
+$color-ui-border: #bfdbfe;
+$color-ui-soft: #dbeafe;
+$color-ui-soft-2: #e0f2fe;
+
+$color-success: #16a34a;
+$color-danger: #dc2626;
+
+$gradient-page: linear-gradient(135deg, #eef7ff, #dbeafe 45%, #f8fbff);
+$gradient-primary: linear-gradient(135deg, $color-blue-600, $color-cyan-500);
+$gradient-hero: linear-gradient(145deg, $color-blue-700, #38bdf8);
+$gradient-logo: linear-gradient(135deg, $color-blue-700, $color-blue-400);
+
+$shadow-topbar: 0 10px 30px #1d4ed81a;
+$shadow-glass: 0 20px 60px #1e40af1f;
+$shadow-hero: 0 30px 80px #2563eb66;
+
+$radius-xs: 14px;
+$radius-sm: 16px;
+$radius-md: 20px;
+$radius-lg: 22px;
+$radius-xl: 24px;
+$radius-2xl: 28px;
+$radius-3xl: 30px;
+$radius-4xl: 34px;
+$radius-pill: 999px;
+$radius-round: 50%;
+
+$breakpoint-md: 760px;

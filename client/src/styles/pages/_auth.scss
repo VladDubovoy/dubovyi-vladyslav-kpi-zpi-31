@@ -1,0 +1,19 @@
+@use "../abstracts/functions" as fn;
+@use "../abstracts/variables" as vars;
+
+.auth-card {
+  max-width: fn.rem(620px);
+  margin: fn.rem(54px) auto;
+  padding: fn.rem(28px);
+  border-radius: fn.rem(vars.$radius-3xl);
+
+  h1 {
+    color: vars.$color-text-heading;
+  }
+
+  form {
+    display: grid;
+    gap: fn.rem(12px);
+    margin-bottom: fn.rem(12px);
+  }
+}

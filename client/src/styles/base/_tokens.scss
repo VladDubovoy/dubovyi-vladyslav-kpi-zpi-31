@@ -1,0 +1,10 @@
+@use "../abstracts/variables" as vars;
+
+:root {
+  font-family: Inter, system-ui, sans-serif;
+  color: vars.$color-text-primary;
+  background: vars.$gradient-page;
+  --blue: #{vars.$color-blue-600};
+  --dark: #{vars.$color-text-dark};
+  --soft: #{vars.$color-ui-soft-2};
+}

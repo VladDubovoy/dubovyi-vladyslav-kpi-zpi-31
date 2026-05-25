@@ -9,6 +9,7 @@ export function PostCard({ post }) {
   const [likes, setLikes] = useState(post.likes?.length || 0);
   const [comments, setComments] = useState(post.comments || []);
   const [comment, setComment] = useState("");
+  const [expanded, setExpanded] = useState(false);
 
   async function likePost() {
     if (!user) return alert("Спочатку увійдіть");
@@ -66,13 +67,16 @@ export function PostCard({ post }) {
           <button onClick={likePost}>
             <Heart size={18} /> {likes}
           </button>
-          <button>
+          <button
+            onClick={() => setExpanded((value) => !value)}
+            aria-expanded={expanded}
+          >
             <MessageCircle size={18} /> {comments.length}
           </button>
           <button onClick={reportPost}>Скарга</button>
         </div>
 
-        {comments.slice(-2).map((item) => (
+        {(expanded ? comments : comments.slice(-3)).map((item) => (
           <small className="mini" key={item._id}>
             <b>{item.author?.name || "User"}:</b> {item.text}
           </small>

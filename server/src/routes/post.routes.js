@@ -25,6 +25,7 @@ router.get("/", async (req, res) => {
   const limit = 12;
   const posts = await Post.find(filter)
     .populate("author", "name avatar role")
+    .populate("comments.author", "name avatar")
     .sort("-createdAt")
     .skip((page - 1) * limit)
     .limit(limit);

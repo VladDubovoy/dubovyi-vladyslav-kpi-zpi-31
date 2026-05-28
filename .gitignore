@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Runtime uploads and logs
+uploads/
+logs/
+*.log
+
+# Local env files (keep example)
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# OS/editor
+.DS_Store
+.vscode/
+.playwright-mcp
+.claude
+.idea/
+docs
+

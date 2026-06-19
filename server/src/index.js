@@ -5,6 +5,7 @@ import morgan from "morgan";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import path from "path";
+import fs from "fs";
 import { fileURLToPath } from "url";
 import http from "http";
 import { Server } from "socket.io";
@@ -44,8 +45,43 @@ app.use(express.json({ limit: "5mb" }));
 app.use(morgan("dev"));
 app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
 
+const statusTemplate = fs.readFileSync(
+  path.join(__dirname, "views", "status.html"),
+  "utf8",
+);
+
+function renderStatusPage() {
+  const ok = mongoose.connection.readyState === 1;
+  const dbState = ["disconnected", "connected", "connecting", "disconnecting"][
+    mongoose.connection.readyState
+  ];
+  const replacements = {
+    "{{PORT}}": String(port),
+    "{{DB_STATE}}": dbState.toUpperCase(),
+    "{{STATE_COLOR}}": ok ? "#16a34a" : "#dc2626",
+    "{{BADGE_TEXT}}": ok ? "RUNNING" : "DB DOWN",
+    "{{UPTIME}}": String(Math.floor(process.uptime())),
+    "{{NODE_VERSION}}": process.version,
+    "{{CLIENT_URL}}": process.env.CLIENT_URL || "http://localhost:5173",
+  };
+  return Object.entries(replacements).reduce(
+    (html, [key, value]) => html.split(key).join(value),
+    statusTemplate,
+  );
+}
+
+app.get("/", (_, res) => {
+  res.status(200).type("html").send(renderStatusPage());
+});
+
 app.get("/api/health", (_, res) =>
-  res.json({ ok: true, service: "MediaShare API Pro" }),
+  res.json({
+    ok: true,
+    service: "MediaShare API Pro",
+    db: mongoose.connection.readyState === 1 ? "connected" : "disconnected",
+    uptime: Math.floor(process.uptime()),
+    node: process.version,
+  }),
 );
 app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);
@@ -83,6 +119,19 @@ const port = process.env.PORT || 5000;
 await mongoose.connect(
   process.env.MONGO_URI || "mongodb://127.0.0.1:27017/media_share_platform",
 );
-server.listen(port, () =>
-  console.log(`API + Chat running on http://localhost:${port}`),
-);
+server.listen(port, () => {
+  console.log(`
+============================================================
+  ✓ MediaShare Blue Pro API is RUNNING
+  ✓ MongoDB connected
+  ✓ Socket.IO ready
+
+  Status page : http://localhost:${port}
+  API base    : http://localhost:${port}/api
+  Health      : http://localhost:${port}/api/health
+  Uploads     : http://localhost:${port}/uploads/
+
+  Frontend    : ${process.env.CLIENT_URL || "http://localhost:5173"}
+============================================================
+`);
+});

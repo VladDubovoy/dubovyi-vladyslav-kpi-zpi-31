@@ -1,9 +1,9 @@
-import { mediaBase } from "../api/client";
+import { resolveMediaUrl } from "../api/client";
 
 export function MediaPreview({ item }) {
   if (!item) return null;
 
-  const src = mediaBase + item.url;
+  const src = resolveMediaUrl(item.url);
 
   if (item.type === "image") return <img src={src} alt="media" />;
   if (item.type === "video") return <video controls src={src} />;

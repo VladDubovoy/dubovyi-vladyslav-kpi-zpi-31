@@ -6,6 +6,15 @@ const REQUEST_TIMEOUT_MS = 15000;
 export const apiBase = API;
 export const mediaBase = API.replace(/\/api\/?$/, "");
 
+export function resolveMediaUrl(url) {
+  if (!url) return "";
+  if (/^https?:\/\//i.test(url)) return url;
+  if (url.startsWith("//") || url.startsWith("data:") || url.startsWith("blob:")) {
+    return url;
+  }
+  return `${mediaBase}${url.startsWith("/") ? "" : "/"}${url}`;
+}
+
 function normalizePath(path) {
   if (typeof path !== "string" || !path.trim()) {
     throw new Error("Некоректний шлях запиту");

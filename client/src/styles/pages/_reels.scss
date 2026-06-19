@@ -2,32 +2,226 @@
 @use "../abstracts/mixins" as mix;
 @use "../abstracts/variables" as vars;
 
+.reels-header {
+  display: flex;
+  align-items: center;
+  gap: fn.rem(10px);
+  margin-bottom: fn.rem(24px);
+  color: var(--text-heading);
+  font-size: fn.rem(28px);
+}
+
 .reels {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(fn.rem(260px), 1fr));
-  gap: fn.rem(18px);
+  // Desktop — максимум 3 у рядку.
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: fn.rem(22px);
+}
+
+// Планшет — 2 у рядку.
+@media (max-width: fn.rem(1024px)) {
+  .reels {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: fn.rem(18px);
+  }
+}
+
+// Мобільний — 1 у рядку.
+@media (max-width: fn.rem(640px)) {
+  .reels {
+    grid-template-columns: 1fr;
+    gap: fn.rem(16px);
+  }
 }
 
 .reel {
   border-radius: fn.rem(vars.$radius-2xl);
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease;
 
-  video {
-    width: 100%;
-    height: fn.rem(420px);
-    object-fit: cover;
-    background: var(--text-heading);
-  }
-
-  div {
-    padding: fn.rem(16px);
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow:
+      0 30px 70px rgba(15, 23, 42, 0.18),
+      var(--shadow-glass);
   }
 }
 
-@include mix.respond-max(vars.$breakpoint-md) {
-  .reel {
-    video {
-      height: fn.rem(300px);
+.reel-video {
+  position: relative;
+  background: linear-gradient(135deg, #0b1326, #0d1726);
+  aspect-ratio: 9 / 16;
+  max-height: fn.rem(480px);
+
+  video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+.reel-body {
+  padding: fn.rem(18px) fn.rem(20px) fn.rem(20px);
+  display: flex;
+  flex-direction: column;
+  gap: fn.rem(12px);
+}
+
+.reel-author {
+  display: flex;
+  align-items: center;
+  gap: fn.rem(12px);
+}
+
+.reel-avatar {
+  width: fn.rem(38px);
+  height: fn.rem(38px);
+  border-radius: 50%;
+  background: vars.$gradient-logo;
+  color: vars.$color-text-inverse;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: fn.rem(15px);
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+}
+
+.reel-author-meta {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+
+  b {
+    color: var(--text-heading);
+    font-size: fn.rem(14px);
+    font-weight: 700;
+  }
+
+  span {
+    color: var(--text-muted);
+    font-size: fn.rem(12px);
+  }
+}
+
+.reel-title {
+  margin: 0;
+  font-size: fn.rem(19px);
+  color: var(--text-heading);
+  line-height: 1.3;
+}
+
+.reel-description {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: fn.rem(14px);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.reel-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: fn.rem(6px);
+
+  span {
+    font-size: fn.rem(12px);
+    font-weight: 700;
+    background: var(--bg-soft-active);
+    color: var(--text-heading);
+    padding: fn.rem(4px) fn.rem(11px);
+    border-radius: fn.rem(99px);
+  }
+}
+
+.reel-actions {
+  display: flex;
+  align-items: center;
+  gap: fn.rem(10px);
+  margin-top: fn.rem(4px);
+  border-top: fn.rem(1px) solid var(--border);
+  padding-top: fn.rem(14px);
+}
+
+.reel-like {
+  display: inline-flex;
+  align-items: center;
+  gap: fn.rem(6px);
+  background: var(--bg-soft);
+  color: var(--text-heading);
+  border: 0;
+  border-radius: fn.rem(99px);
+  padding: fn.rem(8px) fn.rem(14px);
+  font-weight: 700;
+  font-size: fn.rem(14px);
+  cursor: pointer;
+  transition:
+    background 150ms ease,
+    color 150ms ease,
+    transform 150ms ease;
+
+  svg {
+    color: var(--text-muted);
+    transition:
+      color 150ms ease,
+      fill 150ms ease,
+      transform 200ms ease;
+  }
+
+  &:hover {
+    background: var(--bg-soft-active);
+    transform: scale(1.04);
+
+    svg {
+      color: vars.$color-danger;
     }
+  }
+
+  &.liked {
+    background: rgba(220, 38, 38, 0.12);
+    color: vars.$color-danger;
+
+    svg {
+      color: vars.$color-danger;
+      fill: vars.$color-danger;
+      animation: likePop 280ms ease;
+    }
+  }
+}
+
+@keyframes likePop {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.35);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.reel-comments-count {
+  display: inline-flex;
+  align-items: center;
+  gap: fn.rem(6px);
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: fn.rem(13px);
+  padding: fn.rem(8px) fn.rem(12px);
+}
+
+@include mix.respond-max(vars.$breakpoint-md) {
+  .reel-video {
+    aspect-ratio: 16 / 10;
+    max-height: fn.rem(380px);
   }
 }

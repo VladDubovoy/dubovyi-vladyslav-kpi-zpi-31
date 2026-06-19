@@ -5,7 +5,7 @@ import { upload } from "../middleware/upload.js";
 const router = Router();
 
 router.get("/", async (req, res) => {
-  const { q = "" } = req.query;
+  const { q = "", page = 1 } = req.query;
   const filter = { status: "active" };
   if (q)
     filter.$or = [
@@ -13,12 +13,21 @@ router.get("/", async (req, res) => {
       { description: new RegExp(q, "i") },
       { tags: q.toLowerCase() },
     ];
+  const limit = 12;
+  const currentPage = Math.max(1, Number(page) || 1);
   const reels = await Reel.find(filter)
     .populate("author", "name avatar role")
     .populate("comments.author", "name avatar")
     .sort("-createdAt")
-    .limit(30);
-  res.json({ reels });
+    .skip((currentPage - 1) * limit)
+    .limit(limit);
+  const total = await Reel.countDocuments(filter);
+  res.json({
+    reels,
+    total,
+    page: currentPage,
+    pages: Math.max(1, Math.ceil(total / limit)),
+  });
 });
 router.post("/", auth, upload.single("video"), async (req, res) => {
   if (!req.file || !req.file.mimetype.startsWith("video/"))

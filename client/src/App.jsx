@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { Header } from "./components/Header";
-import { VIEWS } from "./constants/views";
+import { Toaster } from "./components/Toaster";
+import { PATHS } from "./constants/views";
 import { useAuth } from "./store/auth";
 import { AdminPage } from "./pages/AdminPage";
 import { AuthPage } from "./pages/AuthPage";
@@ -11,22 +12,39 @@ import { ReelsPage } from "./pages/ReelsPage";
 import { StoriesPage } from "./pages/StoriesPage";
 
 export function App() {
-  const [view, setView] = useState(VIEWS.FEED);
   const { user } = useAuth();
 
   return (
     <>
-      <Header view={view} onViewChange={setView} />
-
-      {view === VIEWS.FEED && <FeedPage />}
-      {view === VIEWS.STORIES && <StoriesPage />}
-      {view === VIEWS.REELS && <ReelsPage />}
-      {view === VIEWS.CHAT && user && <ChatPage />}
-      {view === VIEWS.AUTH && <AuthPage onViewChange={setView} />}
-      {view === VIEWS.CREATE && user && (
-        <CreatePostPage onViewChange={setView} />
-      )}
-      {view === VIEWS.ADMIN && user?.role === "admin" && <AdminPage />}
+      <Header />
+      <Toaster />
+      <Routes>
+        <Route path={PATHS.FEED} element={<FeedPage />} />
+        <Route path={PATHS.STORIES} element={<StoriesPage />} />
+        <Route path={PATHS.REELS} element={<ReelsPage />} />
+        <Route path={PATHS.AUTH} element={<AuthPage />} />
+        <Route
+          path={PATHS.CHAT}
+          element={user ? <ChatPage /> : <Navigate to={PATHS.AUTH} replace />}
+        />
+        <Route
+          path={PATHS.CREATE}
+          element={
+            user ? <CreatePostPage /> : <Navigate to={PATHS.AUTH} replace />
+          }
+        />
+        <Route
+          path={PATHS.ADMIN}
+          element={
+            user?.role === "admin" ? (
+              <AdminPage />
+            ) : (
+              <Navigate to={PATHS.FEED} replace />
+            )
+          }
+        />
+        <Route path="*" element={<Navigate to={PATHS.FEED} replace />} />
+      </Routes>
     </>
   );
 }

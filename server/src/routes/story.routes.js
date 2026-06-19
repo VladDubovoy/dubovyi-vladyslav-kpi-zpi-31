@@ -5,14 +5,24 @@ import { upload } from "../middleware/upload.js";
 const router = Router();
 const mediaType = (m) => (m.startsWith("video/") ? "video" : "image");
 
-router.get("/", async (_, res) => {
-  const stories = await Story.find({
-    status: "active",
-    expiresAt: { $gt: new Date() },
-  })
+router.get("/", async (req, res) => {
+  const { page = 1 } = req.query;
+  const filter = { status: "active", expiresAt: { $gt: new Date() } };
+  const limit = 12;
+  const currentPage = Math.max(1, Number(page) || 1);
+  const stories = await Story.find(filter)
     .populate("author", "name avatar role")
-    .sort("-createdAt");
-  res.json({ stories });
+    .populate("viewers", "name avatar")
+    .sort("-createdAt")
+    .skip((currentPage - 1) * limit)
+    .limit(limit);
+  const total = await Story.countDocuments(filter);
+  res.json({
+    stories,
+    total,
+    page: currentPage,
+    pages: Math.max(1, Math.ceil(total / limit)),
+  });
 });
 router.post("/", auth, upload.single("media"), async (req, res) => {
   if (!req.file)

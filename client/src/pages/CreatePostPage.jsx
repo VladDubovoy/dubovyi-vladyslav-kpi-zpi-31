@@ -1,9 +1,11 @@
 import { UploadCloud } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { request } from "../api/client";
-import { VIEWS } from "../constants/views";
+import { PATHS } from "../constants/views";
 
-export function CreatePostPage({ onViewChange }) {
+export function CreatePostPage() {
+  const navigate = useNavigate();
   const [type, setType] = useState("post");
   const [form, setForm] = useState({
     title: "",
@@ -28,19 +30,19 @@ export function CreatePostPage({ onViewChange }) {
       if (type === "post") {
         [...files].forEach((file) => payload.append("media", file));
         await request("/posts", { method: "POST", body: payload });
-        onViewChange(VIEWS.FEED);
+        navigate(PATHS.FEED);
       }
 
       if (type === "story") {
         payload.append("media", files[0]);
         await request("/stories", { method: "POST", body: payload });
-        onViewChange(VIEWS.STORIES);
+        navigate(PATHS.STORIES);
       }
 
       if (type === "reel") {
         payload.append("video", files[0]);
         await request("/reels", { method: "POST", body: payload });
-        onViewChange(VIEWS.REELS);
+        navigate(PATHS.REELS);
       }
     } catch (submitError) {
       setError(submitError.message);
@@ -77,8 +79,11 @@ export function CreatePostPage({ onViewChange }) {
       <form onSubmit={handleSubmit}>
         {type !== "story" && (
           <input
+            id="create-title"
+            name="title"
             required
             placeholder="Назва"
+            autoComplete="off"
             onChange={(event) =>
               setForm((prev) => ({ ...prev, title: event.target.value }))
             }
@@ -86,6 +91,8 @@ export function CreatePostPage({ onViewChange }) {
         )}
 
         <textarea
+          id="create-description"
+          name="description"
           placeholder={type === "story" ? "Підпис до story" : "Опис"}
           onChange={(event) =>
             setForm((prev) => ({
@@ -98,7 +105,10 @@ export function CreatePostPage({ onViewChange }) {
 
         {type !== "story" && (
           <input
+            id="create-tags"
+            name="tags"
             placeholder="Теги через кому"
+            autoComplete="off"
             onChange={(event) =>
               setForm((prev) => ({ ...prev, tags: event.target.value }))
             }
@@ -106,6 +116,8 @@ export function CreatePostPage({ onViewChange }) {
         )}
 
         <input
+          id="create-media"
+          name="media"
           required
           type="file"
           multiple={type === "post"}

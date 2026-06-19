@@ -3,8 +3,11 @@
 @use "./base/elements";
 @use "./utilities/helpers";
 @use "./components/header";
+@use "./components/loader";
+@use "./components/pagination";
 @use "./components/post-card";
 @use "./components/media-preview";
+@use "./components/toaster";
 @use "./pages/feed";
 @use "./pages/auth";
 @use "./pages/create-post";

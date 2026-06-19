@@ -1,30 +1,48 @@
 import { LogOut, MessageSquare, Plus, ShieldCheck } from "lucide-react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../store/auth";
-import { VIEWS } from "../constants/views";
+import { PATHS } from "../constants/views";
 import { ThemeToggle } from "./ThemeToggle";
 
 const navItems = [
-  [VIEWS.FEED, "Стрічка"],
-  [VIEWS.STORIES, "Stories"],
-  [VIEWS.REELS, "Reels"],
+  [PATHS.FEED, "Стрічка"],
+  [PATHS.STORIES, "Stories"],
+  [PATHS.REELS, "Reels"],
 ];
 
-export function Header({ view, onViewChange }) {
+function isActivePath(currentPath, targetPath) {
+  if (targetPath === PATHS.FEED) return currentPath === PATHS.FEED;
+  return currentPath === targetPath || currentPath.startsWith(`${targetPath}/`);
+}
+
+export function Header() {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+
+  function go(path) {
+    navigate(path);
+  }
+
+  function handleLogout() {
+    logout();
+    navigate(PATHS.FEED);
+  }
 
   return (
     <header className="topbar">
-      <div className="brand" onClick={() => onViewChange(VIEWS.FEED)}>
+      <div className="brand" onClick={() => go(PATHS.FEED)}>
         <div className="logo">M</div>
         <span>MediaShare Blue Pro</span>
       </div>
 
       <nav>
-        {navItems.map(([id, label]) => (
+        {navItems.map(([path, label]) => (
           <button
-            key={id}
-            className={view === id ? "active" : ""}
-            onClick={() => onViewChange(id)}
+            key={path}
+            type="button"
+            className={isActivePath(pathname, path) ? "active" : ""}
+            onClick={() => go(path)}
           >
             {label}
           </button>
@@ -32,8 +50,9 @@ export function Header({ view, onViewChange }) {
 
         {user && (
           <button
-            className={view === VIEWS.CHAT ? "active" : ""}
-            onClick={() => onViewChange(VIEWS.CHAT)}
+            type="button"
+            className={isActivePath(pathname, PATHS.CHAT) ? "active" : ""}
+            onClick={() => go(PATHS.CHAT)}
           >
             <MessageSquare size={17} /> Чат
           </button>
@@ -41,8 +60,9 @@ export function Header({ view, onViewChange }) {
 
         {user && (
           <button
-            className={view === VIEWS.CREATE ? "active" : ""}
-            onClick={() => onViewChange(VIEWS.CREATE)}
+            type="button"
+            className={isActivePath(pathname, PATHS.CREATE) ? "active" : ""}
+            onClick={() => go(PATHS.CREATE)}
           >
             <Plus size={17} /> Створити
           </button>
@@ -50,8 +70,9 @@ export function Header({ view, onViewChange }) {
 
         {user?.role === "admin" && (
           <button
-            className={view === VIEWS.ADMIN ? "active" : ""}
-            onClick={() => onViewChange(VIEWS.ADMIN)}
+            type="button"
+            className={isActivePath(pathname, PATHS.ADMIN) ? "active" : ""}
+            onClick={() => go(PATHS.ADMIN)}
           >
             <ShieldCheck size={17} /> Адмін
           </button>
@@ -60,11 +81,15 @@ export function Header({ view, onViewChange }) {
         <ThemeToggle />
 
         {!user ? (
-          <button onClick={() => onViewChange(VIEWS.AUTH)} className="primary">
+          <button
+            type="button"
+            onClick={() => go(PATHS.AUTH)}
+            className="primary"
+          >
             Увійти
           </button>
         ) : (
-          <button onClick={logout}>
+          <button type="button" onClick={handleLogout}>
             <LogOut size={17} /> Вийти
           </button>
         )}

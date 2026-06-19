@@ -17,8 +17,19 @@ export function ChatPage() {
   );
 
   useEffect(() => {
-    request("/chat/users").then((response) => setUsers(response.users));
-  }, []);
+    if (!user?._id) {
+      setUsers([]);
+      setActive(null);
+      setMessages([]);
+      return;
+    }
+    request("/chat/users")
+      .then((response) => setUsers(response.users || []))
+      .catch((error) => {
+        console.error("Failed to load chat users:", error);
+        setUsers([]);
+      });
+  }, [user?._id]);
 
   useEffect(() => {
     if (!socket) return;
@@ -93,9 +104,16 @@ export function ChatPage() {
 
               <div className="comment">
                 <input
+                  id="chat-message-input"
+                  name="message"
+                  type="text"
+                  autoComplete="off"
                   value={text}
                   onChange={(event) => setText(event.target.value)}
                   placeholder="Повідомлення..."
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") sendMessage();
+                  }}
                 />
                 <button onClick={sendMessage}>Надіслати</button>
               </div>

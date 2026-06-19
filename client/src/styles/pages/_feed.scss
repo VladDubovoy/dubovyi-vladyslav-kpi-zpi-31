@@ -29,6 +29,7 @@
   background: var(--bg-soft);
   color: vars.$color-blue-700;
   font-weight: 800;
+  display: block;
 }
 
 .hero-card {
@@ -63,8 +64,27 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(fn.rem(290px), 1fr));
+  // Максимум 4 у рядку, далі переходить на наступний рядок.
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: fn.rem(18px);
+}
+
+@media (max-width: fn.rem(1200px)) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: fn.rem(900px)) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: fn.rem(560px)) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @include mix.respond-max(vars.$breakpoint-md) {

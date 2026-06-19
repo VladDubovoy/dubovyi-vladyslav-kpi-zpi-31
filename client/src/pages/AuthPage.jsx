@@ -1,12 +1,14 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../store/auth";
-import { VIEWS } from "../constants/views";
+import { PATHS } from "../constants/views";
 
-export function AuthPage({ onViewChange }) {
+export function AuthPage() {
   const [mode, setMode] = useState("login");
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [error, setError] = useState("");
   const auth = useAuth();
+  const navigate = useNavigate();
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -19,7 +21,7 @@ export function AuthPage({ onViewChange }) {
         await auth.register(form.name, form.email, form.password);
       }
 
-      onViewChange(VIEWS.FEED);
+      navigate(PATHS.FEED);
     } catch (submitError) {
       setError(submitError.message);
     }
@@ -35,6 +37,8 @@ export function AuthPage({ onViewChange }) {
       <form onSubmit={handleSubmit}>
         {mode === "register" && (
           <input
+            id="auth-name"
+            name="name"
             required
             autoComplete="name"
             placeholder="Ім’я"
@@ -45,6 +49,8 @@ export function AuthPage({ onViewChange }) {
         )}
 
         <input
+          id="auth-email"
+          name="email"
           required
           type="email"
           autoComplete="email"
@@ -55,6 +61,8 @@ export function AuthPage({ onViewChange }) {
         />
 
         <input
+          id="auth-password"
+          name="password"
           required
           minLength="6"
           placeholder="Пароль"

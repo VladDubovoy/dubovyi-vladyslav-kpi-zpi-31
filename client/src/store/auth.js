@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { request } from "../api/client";
+import { useToast } from "./toast";
 
 function readStoredTheme() {
   try {
@@ -20,6 +21,12 @@ function systemTheme() {
 }
 
 function resolveInitialTheme() {
+  // 1. Свіжий вибір на цьому пристрої (localStorage.theme) має пріоритет —
+  //    він оновлюється при кожному кліку на toggle. localStorage.user.theme —
+  //    лише snapshot з моменту логіну, тому використовуємо його як fallback.
+  const stored = readStoredTheme();
+  if (stored) return stored;
+
   const storedUser = (() => {
     try {
       return JSON.parse(localStorage.getItem("user") || "null");
@@ -30,8 +37,7 @@ function resolveInitialTheme() {
   if (storedUser?.theme === "light" || storedUser?.theme === "dark") {
     return storedUser.theme;
   }
-  const stored = readStoredTheme();
-  if (stored) return stored;
+
   return systemTheme();
 }
 
@@ -56,6 +62,21 @@ export const useAuth = create((set, get) => ({
     if (next !== "light" && next !== "dark") return;
     set({ theme: next });
     applyTheme(next);
+
+    // Тримаємо localStorage.user.theme у синхроні зі свіжим вибором,
+    // щоб resolveInitialTheme отримував той самий snapshot після перезавантаження.
+    try {
+      const raw = localStorage.getItem("user");
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && parsed.theme !== next) {
+          parsed.theme = next;
+          localStorage.setItem("user", JSON.stringify(parsed));
+          set({ user: parsed });
+        }
+      }
+    } catch {}
+
     if (get().token) {
       try {
         await request("/users/me/theme", {
@@ -69,31 +90,51 @@ export const useAuth = create((set, get) => ({
   },
 
   login: async (email, password) => {
-    const data = await request("/auth/login", {
-      method: "POST",
-      body: JSON.stringify({ email, password }),
-    });
-    localStorage.setItem("token", data.token);
-    localStorage.setItem("user", JSON.stringify(data.user));
-    set({ user: data.user, token: data.token });
-    await syncThemeAfterAuth(get, set, data.user);
+    try {
+      const data = await request("/auth/login", {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+      });
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      set({ user: data.user, token: data.token });
+      await syncThemeAfterAuth(get, set, data.user);
+      useToast.getState().success(`З поверненням, ${data.user.name}!`);
+    } catch (error) {
+      useToast.getState().error(error.message || "Не вдалося увійти");
+      throw error;
+    }
   },
 
   register: async (name, email, password) => {
-    const data = await request("/auth/register", {
-      method: "POST",
-      body: JSON.stringify({ name, email, password }),
-    });
-    localStorage.setItem("token", data.token);
-    localStorage.setItem("user", JSON.stringify(data.user));
-    set({ user: data.user, token: data.token });
-    await syncThemeAfterAuth(get, set, data.user);
+    try {
+      const data = await request("/auth/register", {
+        method: "POST",
+        body: JSON.stringify({ name, email, password }),
+      });
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      set({ user: data.user, token: data.token });
+      await syncThemeAfterAuth(get, set, data.user);
+      useToast.getState().success(`Акаунт створено. Вітаємо, ${data.user.name}!`);
+    } catch (error) {
+      useToast.getState().error(error.message || "Не вдалося зареєструватися");
+      throw error;
+    }
   },
 
   logout: () => {
+    const previousName = get().user?.name;
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     set({ user: null, token: null });
+    useToast
+      .getState()
+      .info(
+        previousName
+          ? `До зустрічі, ${previousName}!`
+          : "Ви вийшли з акаунту",
+      );
   },
 }));
 

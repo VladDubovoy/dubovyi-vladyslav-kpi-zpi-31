@@ -1,47 +1,151 @@
-import { Film, Heart } from "lucide-react";
+import { Film, Heart, MessageCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { request, resolveMediaUrl } from "../api/client";
+import { Loader } from "../components/Loader";
+import { Pagination } from "../components/Pagination";
 import { useAuth } from "../store/auth";
 
 export function ReelsPage() {
   const [reels, setReels] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [pages, setPages] = useState(1);
   const { user } = useAuth();
 
-  async function loadReels() {
-    const response = await request("/reels");
-    setReels(response.reels);
+  async function loadReels(pageToLoad = 1) {
+    setLoading(true);
+    try {
+      const response = await request(`/reels?page=${pageToLoad}`);
+      setReels(response.reels || []);
+      setPages(response.pages || 1);
+      setPage(response.page || pageToLoad);
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
-    loadReels();
+    loadReels(1);
   }, []);
+
+  function handlePageChange(nextPage) {
+    loadReels(nextPage);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function toggleLikeLocally(id) {
+    const userId = String(user._id);
+    setReels((prev) =>
+      prev.map((reel) => {
+        if (reel._id !== id) return reel;
+        const isLiked = reel.likes?.some(
+          (likeId) => String(likeId) === userId,
+        );
+        return {
+          ...reel,
+          likes: isLiked
+            ? reel.likes.filter((likeId) => String(likeId) !== userId)
+            : [...(reel.likes || []), user._id],
+        };
+      }),
+    );
+  }
 
   async function likeReel(id) {
     if (!user) return alert("Спочатку увійдіть");
-    await request(`/reels/${id}/like`, { method: "POST" });
-    loadReels();
+
+    // Оптимістично перемикаємо стан лайка локально — UI миттєво реагує.
+    toggleLikeLocally(id);
+
+    try {
+      await request(`/reels/${id}/like`, { method: "POST" });
+    } catch (error) {
+      // Rollback — повертаємо стан, бо сервер відмовив.
+      toggleLikeLocally(id);
+      console.error("Failed to like reel:", error);
+    }
+  }
+
+  if (loading) {
+    return (
+      <main>
+        <h1 className="reels-header">
+          <Film /> Reels
+        </h1>
+        <Loader label="Завантаження Reels..." />
+      </main>
+    );
   }
 
   return (
     <main>
-      <h1>
+      <h1 className="reels-header">
         <Film /> Reels
       </h1>
       <section className="reels">
         {reels.map((reel) => (
           <article className="reel glass" key={reel._id}>
-            <video src={resolveMediaUrl(reel.video.url)} controls loop />
-            <div>
-              <b>{reel.title}</b>
-              <p>{reel.description}</p>
-              <small>@{reel.author?.name}</small>
-              <button onClick={() => likeReel(reel._id)}>
-                <Heart size={18} /> {reel.likes?.length || 0}
-              </button>
+            <div className="reel-video">
+              <video
+                src={resolveMediaUrl(reel.video.url)}
+                controls
+                loop
+                preload="metadata"
+              />
+            </div>
+            <div className="reel-body">
+              <header className="reel-author">
+                <div className="reel-avatar">
+                  {reel.author?.name?.[0]?.toUpperCase() || "?"}
+                </div>
+                <div className="reel-author-meta">
+                  <b>{reel.author?.name}</b>
+                  <span>@{(reel.author?.name || "").toLowerCase().replace(/\s+/g, ".")}</span>
+                </div>
+              </header>
+
+              <h3 className="reel-title">{reel.title}</h3>
+              <p className="reel-description">{reel.description}</p>
+
+              {reel.tags?.length > 0 && (
+                <div className="reel-tags">
+                  {reel.tags.map((tag) => (
+                    <span key={tag}>#{tag}</span>
+                  ))}
+                </div>
+              )}
+
+              <div className="reel-actions">
+                {(() => {
+                  const isLiked =
+                    !!user &&
+                    reel.likes?.some(
+                      (id) => String(id) === String(user._id),
+                    );
+                  return (
+                    <button
+                      className={`reel-like${isLiked ? " liked" : ""}`}
+                      onClick={() => likeReel(reel._id)}
+                      aria-pressed={isLiked}
+                      aria-label={isLiked ? "Прибрати лайк" : "Поставити лайк"}
+                    >
+                      <Heart
+                        size={18}
+                        fill={isLiked ? "currentColor" : "none"}
+                      />{" "}
+                      {reel.likes?.length || 0}
+                    </button>
+                  );
+                })()}
+              </div>
             </div>
           </article>
         ))}
       </section>
+
+      {!reels.length && <p className="empty">Поки немає reels.</p>}
+
+      <Pagination page={page} pages={pages} onPageChange={handlePageChange} />
     </main>
   );
 }

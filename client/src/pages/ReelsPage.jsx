@@ -1,9 +1,10 @@
-import { Film, Heart, MessageCircle } from "lucide-react";
+import { Film, Heart, MessageCircle, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { request, resolveMediaUrl } from "../api/client";
 import { Loader } from "../components/Loader";
 import { Pagination } from "../components/Pagination";
 import { useAuth } from "../store/auth";
+import { useToast } from "../store/toast";
 
 export function ReelsPage() {
   const [reels, setReels] = useState([]);
@@ -11,6 +12,18 @@ export function ReelsPage() {
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
   const { user } = useAuth();
+  const toast = useToast();
+
+  async function deleteReel(reelId) {
+    if (!window.confirm("Видалити цей reel?")) return;
+    try {
+      await request(`/reels/${reelId}`, { method: "DELETE" });
+      setReels((prev) => prev.filter((r) => r._id !== reelId));
+      toast.success("Reel видалено");
+    } catch (error) {
+      toast.error(error.message || "Не вдалося видалити reel");
+    }
+  }
 
   async function loadReels(pageToLoad = 1) {
     setLoading(true);
@@ -122,19 +135,38 @@ export function ReelsPage() {
                     reel.likes?.some(
                       (id) => String(id) === String(user._id),
                     );
+                  const canDelete =
+                    !!user &&
+                    (String(reel.author?._id) === String(user._id) ||
+                      user.role === "admin");
                   return (
-                    <button
-                      className={`reel-like${isLiked ? " liked" : ""}`}
-                      onClick={() => likeReel(reel._id)}
-                      aria-pressed={isLiked}
-                      aria-label={isLiked ? "Прибрати лайк" : "Поставити лайк"}
-                    >
-                      <Heart
-                        size={18}
-                        fill={isLiked ? "currentColor" : "none"}
-                      />{" "}
-                      {reel.likes?.length || 0}
-                    </button>
+                    <>
+                      <button
+                        className={`reel-like${isLiked ? " liked" : ""}`}
+                        onClick={() => likeReel(reel._id)}
+                        aria-pressed={isLiked}
+                        aria-label={
+                          isLiked ? "Прибрати лайк" : "Поставити лайк"
+                        }
+                      >
+                        <Heart
+                          size={18}
+                          fill={isLiked ? "currentColor" : "none"}
+                        />{" "}
+                        {reel.likes?.length || 0}
+                      </button>
+                      {canDelete && (
+                        <button
+                          type="button"
+                          className="reel-delete"
+                          onClick={() => deleteReel(reel._id)}
+                          aria-label="Видалити reel"
+                          title="Видалити"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      )}
+                    </>
                   );
                 })()}
               </div>

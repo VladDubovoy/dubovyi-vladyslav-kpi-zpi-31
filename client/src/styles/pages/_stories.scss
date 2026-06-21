@@ -53,11 +53,41 @@
   }
 }
 
+.story-row-actions {
+  display: flex;
+  align-items: center;
+  gap: fn.rem(6px);
+  margin-top: fn.rem(8px);
+}
+
+.story-delete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fn.rem(32px);
+  height: fn.rem(32px);
+  background: transparent;
+  border: fn.rem(1px) solid var(--border);
+  border-radius: fn.rem(99px);
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0;
+  transition:
+    background 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease;
+
+  &:hover {
+    background: rgba(220, 38, 38, 0.1);
+    color: vars.$color-danger;
+    border-color: vars.$color-danger;
+  }
+}
+
 .story-views-toggle {
   display: inline-flex;
   align-items: center;
   gap: fn.rem(6px);
-  margin-top: fn.rem(8px);
   padding: fn.rem(6px) fn.rem(12px);
   border-radius: fn.rem(99px);
   background: var(--bg-soft);

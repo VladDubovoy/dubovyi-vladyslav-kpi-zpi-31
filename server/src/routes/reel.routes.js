@@ -67,4 +67,14 @@ router.post("/:id/comments", auth, async (req, res) => {
   await r.populate("comments.author", "name avatar");
   res.status(201).json(r.comments.at(-1));
 });
+
+router.delete("/:id", auth, async (req, res) => {
+  const r = await Reel.findById(req.params.id);
+  if (!r) return res.status(404).json({ message: "Reel не знайдено" });
+  if (!r.author.equals(req.user._id) && req.user.role !== "admin")
+    return res.status(403).json({ message: "Forbidden" });
+  await r.deleteOne();
+  res.json({ ok: true });
+});
+
 export default router;

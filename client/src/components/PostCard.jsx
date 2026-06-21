@@ -1,7 +1,8 @@
-import { Flag, Heart, MessageCircle, ShieldCheck } from "lucide-react";
+import { Flag, Heart, MessageCircle, ShieldCheck, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { request } from "../api/client";
 import { useAuth } from "../store/auth";
+import { useToast } from "../store/toast";
 import { MediaPreview } from "./MediaPreview";
 
 function getHandle(name) {
@@ -9,8 +10,9 @@ function getHandle(name) {
   return name.toLowerCase().replace(/\s+/g, ".");
 }
 
-export function PostCard({ post }) {
+export function PostCard({ post, onDeleted }) {
   const { user } = useAuth();
+  const toast = useToast();
   const [likes, setLikes] = useState(post.likes?.length || 0);
   const [liked, setLiked] = useState(
     !!user &&
@@ -64,10 +66,25 @@ export function PostCard({ post }) {
       body: JSON.stringify({ reason: "Порушення правил" }),
     });
 
-    alert("Скаргу відправлено");
+    toast.success("Скаргу відправлено");
+  }
+
+  async function deletePost() {
+    if (!user) return;
+    if (!window.confirm("Видалити цей пост? Дію не можна скасувати.")) return;
+    try {
+      await request(`/posts/${post._id}`, { method: "DELETE" });
+      toast.success("Пост видалено");
+      onDeleted?.(post._id);
+    } catch (error) {
+      toast.error(error.message || "Не вдалося видалити пост");
+    }
   }
 
   const isAdmin = post.author?.role === "admin";
+  const canDelete =
+    !!user &&
+    (String(post.author?._id) === String(user._id) || user.role === "admin");
 
   return (
     <article className="post glass">
@@ -142,6 +159,16 @@ export function PostCard({ post }) {
             <Flag size={16} />
             <span className="post-report-label">Скарга</span>
           </button>
+          {canDelete && (
+            <button
+              className="post-delete"
+              onClick={deletePost}
+              aria-label="Видалити пост"
+              title="Видалити"
+            >
+              <Trash2 size={16} />
+            </button>
+          )}
 
           {comments.length > 0 ? (
             <ul
